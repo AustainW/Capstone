@@ -78,11 +78,19 @@ public class LocationModel{
 				new CustomLocationListener()
 				);
 				
-		DownloadTask dtask = new DownloadTask();
-		dtask.setModel(this);
-		dtask.execute("GetCoordinates");
+//		DownloadTask dtask = new DownloadTask();
+//		dtask.setModel(this);
+//		dtask.execute("GetCoordinates");
+		
+		GeoPair temp1 = new GeoPair();
+		temp1.setLatitude(47.14567);
+		temp1.setLongitude(-122.44678);
+		POI b1 = new PointOfInterest("TestOne", 1, 47.14567, -122.44678, "PointOfInterest");
+		ArrayList<POI> temp = new ArrayList<POI>();
+		temp.add(b1);
 		
 		
+		createProximityAlerts(temp);
 		
 	}
 	
@@ -103,12 +111,6 @@ public class LocationModel{
 	
 	private void addCoordinatesToPOIList(ArrayList data){
 		createProximityAlerts(data);
-	}
-	
-	private void createProximityAlerts(){
-		//loop through each of the POIs
-		//create a proximity alert with the lat/long of the current POI
-		//MAKE SURE EACH ALERT HAS A UNIQUE ID
 	}
 
 	private void createProximityAlerts(ArrayList locationsArray){
