@@ -29,7 +29,6 @@ public class MainScreenActivity extends Activity {
 		noteBox = (CheckBox) findViewById(R.id.recieveNotsCheckBox);
 		lModel = new LocationModel(getApplicationContext(), noteBox.isChecked() ,getString(R.string.poi_url));
 		
-		 //mIntentFilter = new IntentFilter(PROXIMITY_INTENT_ACTION);
 		
 	}
 

@@ -12,7 +12,7 @@ public class GeoPair {
 	private double longitude;
 	private double latitude;
 	
-	public GeoPair(double longi, double lati) {
+	public GeoPair(double lati, double longi) {
 		this.longitude = longi;
 		this.latitude = lati;
 	}

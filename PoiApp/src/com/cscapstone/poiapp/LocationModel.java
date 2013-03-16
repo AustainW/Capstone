@@ -146,8 +146,7 @@ public class LocationModel{
 		//no expiration time
 		long expiration = -1;
 		
-		LocationManager lManager = 
-				(LocationManager) appContext.getSystemService(appContext.LOCATION_SERVICE);
+		
 		
 		Intent intent = new Intent(PROXIMITY_INTENT_ACTION);
 		intent.putExtra(POI_NAME, name);
@@ -155,7 +154,7 @@ public class LocationModel{
 		PendingIntent pendingIntent = 
 				PendingIntent.getBroadcast(appContext, requestCode, intent, PendingIntent.FLAG_CANCEL_CURRENT);
 		
-		lManager.addProximityAlert(lat, lon, radius, expiration, pendingIntent);
+		locationManager.addProximityAlert(lat, lon, radius, expiration, pendingIntent);
 	
 	}
 
@@ -323,20 +322,20 @@ public class LocationModel{
 						String id = o.getString(TAG_ID);//I think this is a number of some sort
 						String type = o.getString(TAG_TYPE);
 						if(type.equalsIgnoreCase("poi")){
-//							JSONArray obj = o.getJSONArray(TAG_GEOPOINTS);
-//							
-//							ArrayList<GeoPair> listCoords = new ArrayList<GeoPair>();
-//							for(int j = 0; j < obj.length(); j++){
-//								double longi = Double.parseDouble(o.getString(TAG_LONGITUDE));
-//								double lati = Double.parseDouble(o.getString(TAG_LATITUDE));
-//								GeoPair geo = new GeoPair(longi, lati);
-//								listCoords.add(geo);
-//							}
+							JSONArray obj = o.getJSONArray(TAG_GEOPOINTS);
+							
+							ArrayList<GeoPair> listCoords = new ArrayList<GeoPair>();
+							for(int j = 0; j < obj.length(); j++){
+								double longi = Double.parseDouble(o.getString(TAG_LONGITUDE));
+								double lati = Double.parseDouble(o.getString(TAG_LATITUDE));
+								GeoPair geo = new GeoPair(longi, lati);
+								listCoords.add(geo);
+							}
 							//Create a new Point of Interest Building object
-//							POI poi = new Building(name, Integer.parseInt(id),
-//								listCoords, type);
-//							//Add the object to the arraylist
-//							locations.add(poi);
+							POI poi = new Building(name, Integer.parseInt(id),
+								listCoords, type);
+							//Add the object to the arraylist
+							locations.add(poi);
 							
 						}
 						else if(type.equalsIgnoreCase("Area")){
@@ -369,22 +368,22 @@ public class LocationModel{
 					return locations;
 				}
 				//If the request came from the sendPOIData method
-//				else if(parseType == 2){
-//					//create an arraylsit to hold the locations
-//					ArrayList<String> facts = new ArrayList<String>();
-//					//Create a JOSN array of the data. Each of the facts should be contained in it.
-//					JSONArray l = jsonObj.getJSONArray(TAG_FACTS);
-//					for(int i = 0; i < l.length(); i++){
-//						//Get the next JSON Object
-//						JSONObject o = l.getJSONObject(i);
-//						//Put the fact into a string
-//						String fact = o.getString(TAG_TEXT);
-//						//Add the fact to the arraylist
-//						facts.add(fact);
-//					}
-//					
-//					return facts;
-//				}
+				else if(parseType == 2){
+					//create an arraylsit to hold the locations
+					ArrayList<String> facts = new ArrayList<String>();
+					//Create a JOSN array of the data. Each of the facts should be contained in it.
+					//JSONArray l = jsonObj.getJSONArray(TAG_FACTS);
+					for(int i = 0; i < jsonObj.length(); i++){
+						//Get the next JSON Object
+						JSONObject o = jsonObj.getJSONObject(i);
+						//Put the fact into a string
+						String fact = o.getString(TAG_TEXT);
+						//Add the fact to the arraylist
+						facts.add(fact);
+					}
+					
+					return facts;
+				}
 				
 			} catch (JSONException e) {
 				Log.e("JSON Parser", "Error parsing JSON");
