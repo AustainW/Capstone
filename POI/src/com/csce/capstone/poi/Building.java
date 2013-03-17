@@ -1,0 +1,78 @@
+/**
+ * 
+ */
+package com.csce.capstone.poi;
+
+import java.util.ArrayList;
+
+import com.csce.capstone.poi.GeoPair;
+
+/**
+ * @author Capstone
+ *
+ */
+public class Building {
+
+	private String name;
+	private int id;
+	private String type;
+	private ArrayList<GeoPair> points;
+	
+	public Building(String name, int id, ArrayList<GeoPair> listCoords,
+			String type) {
+		this.name = name;
+		this.type = type;
+		this.id = id;
+		this.points = listCoords;
+	}
+
+	/**
+	 * @return the name
+	 */
+	public String getName() {
+		return name;
+	}
+
+	/**
+	 * @param name the name to set
+	 */
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	/**
+	 * @return the id
+	 */
+	public int getId() {
+		return id;
+	}
+
+	/**
+	 * @param id the id to set
+	 */
+	public void setId(int id) {
+		this.id = id;
+	}
+
+	/**
+	 * @return the type
+	 */
+	public String getType() {
+		return type;
+	}
+
+	/**
+	 * @param type the type to set
+	 */
+	public void setType(String type) {
+		this.type = type;
+	}
+	
+	public ArrayList<GeoPair> getPointsArray(){
+		return points;
+	}
+	
+	public int getPointsListSize(){
+		return points.size();
+	}
+}
