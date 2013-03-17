@@ -24,7 +24,12 @@
         </activity>
         <activity
             android:name="com.csce.capstone.poi.AndroidUIFactActivity"
-            android:label="@string/title_activity_android_uifact" >
+            android:label="@string/title_activity_android_uifact" 
+            android:parentActivityName=".AndroidUIMainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".AndroidUIFactActivity"/>
+            
         </activity>
         <activity
             android:name="com.csce.capstone.poi.AndroidUILocationsListActivity"

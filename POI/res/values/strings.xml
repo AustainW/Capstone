@@ -6,5 +6,6 @@
     <string name="hello_world">Hello world!</string>
     <string name="title_activity_android_uifact">AndroidUIFactActivity</string>
     <string name="title_activity_android_uilocations_list">AndroidUILocationsListActivity</string>
+    <string name="poi_url">http://www.cs.plu.edu/~demacia/api/</string>
 
 </resources>

@@ -11,7 +11,7 @@ import com.csce.capstone.poi.GeoPair;
  * @author Capstone
  *
  */
-public class Point {
+public class Point implements POI{
 
 	private GeoPair point;
 	private String name;
@@ -35,6 +35,22 @@ public class Point {
 		point = new GeoPair(lati, longi);
 		points = new ArrayList<GeoPair>();
 		points.add(point);
+	}
+	
+	/**
+	 * Constructor with all the elements
+	 * @param name Name of the Point of Interest
+	 * @param id Id of the Point of Interest
+	 * @param lat Latitude of the Point of Interest
+	 * @param longi Longitude of the Point of Interest
+	 * @param type Type of the Point of Interest
+	 */
+	public Point(String name, int id, String type){
+		this.name = name;
+		
+		this.id = id;
+		this.type = type;
+		points = null;
 	}
 	/**
 	 * Empty constructor

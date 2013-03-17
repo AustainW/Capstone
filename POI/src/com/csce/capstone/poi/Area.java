@@ -5,20 +5,18 @@ package com.csce.capstone.poi;
 
 import java.util.ArrayList;
 
-import com.csce.capstone.poi.GeoPair;
-
 /**
  * @author Capstone
  *
  */
-public class Building implements POI {
+public class Area implements POI {
 
 	private String name;
 	private int id;
 	private String type;
 	private ArrayList<GeoPair> points;
 	
-	public Building(String name, int id, ArrayList<GeoPair> listCoords,
+	public Area(String name, int id, ArrayList<GeoPair> listCoords,
 			String type) {
 		this.name = name;
 		this.type = type;
@@ -26,7 +24,7 @@ public class Building implements POI {
 		this.points = listCoords;
 	}
 	
-	public Building(String name, int id, String type) {
+	public Area(String name, int id, String type) {
 		this.name = name;
 		this.type = type;
 		this.id = id;
