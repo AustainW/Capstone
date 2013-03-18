@@ -75,12 +75,14 @@ public class AndroidUIMainActivity extends Activity {
 		GeoPair LatLongPair = new GeoPair();
 		ArrayList<GeoPair> points = new ArrayList<GeoPair>();
 		ArrayList<String> names = new ArrayList<String>();
+		ArrayList<Integer> ids = new ArrayList<Integer>();
 		
 		for(int i = 0; i < locationsArray.size(); i++){
 			POI poi = (POI) locationsArray.get(i);
 			points.addAll(poi.getPointsArray());
 			for(int p = 0; p < poi.getPointsListSize(); p++){
 				names.add(poi.getName());
+				ids.add(poi.getId());
 			}
 			
 		}
@@ -88,7 +90,8 @@ public class AndroidUIMainActivity extends Activity {
 			LatLongPair.setLatitude(points.get(j).getLatitude());
 			LatLongPair.setLongitude(points.get(j).getLongitude());
 			String name = names.get(j);
-			setProximityAlert(LatLongPair.getLatitude(), LatLongPair.getLongitude(), name, j+1, j);
+			int id = ids.get(j);
+			setProximityAlert(LatLongPair.getLatitude(), LatLongPair.getLongitude(), name, id, j+1, j);
 		}
 		//loop through each of the POIs
 		//create a proximity alert with the lat/long of the current POI
@@ -96,7 +99,7 @@ public class AndroidUIMainActivity extends Activity {
 		//make a receiver.
 	}
 	
-	private void setProximityAlert(double lat, double lon, String name, final long eventID, int requestCode){
+	private void setProximityAlert(double lat, double lon, String name, int id, final long eventID, int requestCode){
 		//Radius of 1 meter
 		int radius = 1;
 		//10 minute expiration time (10mins*60sec*1000milliseconds)
@@ -108,6 +111,7 @@ public class AndroidUIMainActivity extends Activity {
 		
 		Intent intent = new Intent(PROXIMITY_INTENT_ACTION);
 		intent.putExtra(POI_NAME, name);
+		intent.putExtra("ID", id);
 		intent.putExtra(ProximityAlert.EVENT_ID_INTENT_EXTRA, eventID);
 		PendingIntent pendingIntent = 
 				PendingIntent.getBroadcast(this, requestCode, intent, PendingIntent.FLAG_CANCEL_CURRENT);

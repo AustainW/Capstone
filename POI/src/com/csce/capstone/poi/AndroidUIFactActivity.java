@@ -38,7 +38,10 @@ public class AndroidUIFactActivity extends ListActivity {
 		
 		mInfoAdapter = new ArrayAdapter<String>(this, R.layout.row, pointOfInterestData);
 		this.setListAdapter(mInfoAdapter);
+		int poi_id = getIntent().getIntExtra("poi_id", -1);
 		
+		DownloadTask dTask = new DownloadTask();
+		dTask.execute(poi_id);
 	}
 
 	@Override
@@ -57,10 +60,10 @@ public class AndroidUIFactActivity extends ListActivity {
 		Toast.makeText(getBaseContext(), "POI data downloaded successfully", Toast.LENGTH_SHORT).show();
 	}
 	
-	private class DownloadTask extends AsyncTask<String, Integer, Integer>{
+	private class DownloadTask extends AsyncTask<Integer, Integer, Integer>{
 
 		@Override
-		protected Integer doInBackground(String... params) {
+		protected Integer doInBackground(Integer... params) {
 			ArrayList data = null;
 			try{
 				data = sendPOIData(params[0]);
@@ -79,7 +82,7 @@ public class AndroidUIFactActivity extends ListActivity {
 		 * @param poi ID of the point of interest
 		 * @return A list of the facts associated with the point of interest
 		 */
-		private ArrayList sendPOIData(String poi) {
+		private ArrayList sendPOIData(int poi_id) {
 			BufferedReader rd = null;
 			StringBuilder sb = null;
 			String line = null;
@@ -96,7 +99,7 @@ public class AndroidUIFactActivity extends ListActivity {
 				urlConnection.connect();
 				// Sending request to server
 				DataOutputStream dos = new DataOutputStream(urlConnection.getOutputStream()); 
-				dos.writeBytes("point of interest:" + poi + "\r\n");
+				dos.writeBytes("point of interest:" + poi_id + "\r\n");
 				dos.flush();
 					
 				//Create the Readers for the InputStream
@@ -126,7 +129,7 @@ public class AndroidUIFactActivity extends ListActivity {
 			
 			try {
 				JSONArray jsonObj = new JSONArray(json);
-				//create an arraylsit to hold the locations
+				//create an arraylist to hold the locations
 				ArrayList<String> facts = new ArrayList<String>();
 				//Create a JOSN array of the data. Each of the facts should be contained in it.
 				//JSONArray l = jsonObj.getJSONArray(TAG_FACTS);

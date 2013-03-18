@@ -21,6 +21,7 @@ public class ProximityAlert extends BroadcastReceiver{
 
 	public static final String EVENT_ID_INTENT_EXTRA = "EventIDIntentExtraKey";
 	public static final String POI_NAME = "poi_name";
+	public static final String POI_ID = "poi_id";
 	//debugging purposes
 	private static final String TAG = "Proximity Alert";
 	
@@ -28,6 +29,7 @@ public class ProximityAlert extends BroadcastReceiver{
 	public void onReceive(Context context, Intent intent) {
 		long eventID = intent.getLongExtra(EVENT_ID_INTENT_EXTRA, -1);
 		String poi_name = intent.getStringExtra(POI_NAME);
+		int poi_id = intent.getIntExtra("ID", -1);
 		String key = LocationManager.KEY_PROXIMITY_ENTERING;
 		
 		Boolean entering = intent.getBooleanExtra(key, false);
@@ -35,6 +37,7 @@ public class ProximityAlert extends BroadcastReceiver{
 			
 			Intent factIntent = new Intent(context, AndroidUIFactActivity.class);
 			factIntent.putExtra(POI_NAME, poi_name);
+			factIntent.putExtra(POI_ID, poi_id);
 			TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
 			
 			stackBuilder.addParentStack(AndroidUIFactActivity.class);
@@ -49,7 +52,9 @@ public class ProximityAlert extends BroadcastReceiver{
 			
 			int notifyId = 1;
 			builder.setContentTitle("Location Found!");
-			builder.setContentText("You've found " + poi_name);
+			builder.setContentText("You've found " + poi_name + ". Would you like to view " +
+					"information about " + poi_name + "?");
+			builder.setAutoCancel(true);
 			//builder.setSmallIcon();
 			//Create new Activity to get the facts from the server and send them to 
 			//the infoactivity
