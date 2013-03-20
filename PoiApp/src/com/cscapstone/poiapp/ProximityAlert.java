@@ -31,10 +31,15 @@ public class ProximityAlert extends BroadcastReceiver{
 		
 		Boolean entering = intent.getBooleanExtra(key, false);
 		if(entering){
+			
+			Intent factIntent = new Intent();
+			
 			//notification fire
 			NotificationManager mNotification = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
 			//Create new Activity to get the facts from the server and send them to 
 			//the infoactivity
+			
+			
 		}
 		Log.i(TAG, "Alert Recieved!");
 	}

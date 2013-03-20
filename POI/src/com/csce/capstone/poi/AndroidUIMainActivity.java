@@ -26,6 +26,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 import android.view.Menu;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
+import android.widget.TextView;
 
 public class AndroidUIMainActivity extends Activity {
 
@@ -45,6 +49,10 @@ public class AndroidUIMainActivity extends Activity {
 	private static final long MINIMUM_DISTANCECHANGE_FOR_UPDATE = 1; // in Meters
 	private static final long MINIMUM_TIME_BETWEEN_UPDATE = 1000; // in Milliseconds
 	
+	private TextView loading;
+	private Button allLocations;
+	
+	
 	public static final String PROXIMITY_INTENT_ACTION = new String("com.cscapstone.poiapp.action.PROXIMITY_ALERT");
 	public static final String POI_NAME = "poi_name";
 	private LocationManager locationManager;
@@ -62,6 +70,16 @@ public class AndroidUIMainActivity extends Activity {
 				MINIMUM_DISTANCECHANGE_FOR_UPDATE, 
 				new CustomLocationListener());
 		
+		loading = (TextView) findViewById(R.id.loading_text);
+		allLocations = (Button) findViewById(R.id.all_locations_button);
+		allLocations.setOnClickListener(new OnClickListener(){
+
+			@Override
+			public void onClick(View arg0) {
+				Intent i = new Intent(getApplicationContext(), AndroidUILocationsListActivity.class);
+				startActivity(i);
+			}
+		});
 	}
 
 	@Override
@@ -93,6 +111,8 @@ public class AndroidUIMainActivity extends Activity {
 			int id = ids.get(j);
 			setProximityAlert(LatLongPair.getLatitude(), LatLongPair.getLongitude(), name, id, j+1, j);
 		}
+		
+		loading.setText("Points Loaded. Go explore the Campus!");
 		//loop through each of the POIs
 		//create a proximity alert with the lat/long of the current POI
 		//MAKE SURE EACH ALERT HAS A UNIQUE ID
@@ -122,6 +142,13 @@ public class AndroidUIMainActivity extends Activity {
 	
 	
 	private class DownloadTask extends AsyncTask<String, Integer, Integer>{
+		
+		@Override
+		protected void onPreExecute(){
+			super.onPreExecute();
+			loading.setText("Points are being loaded...");
+		}
+		
 		@Override
 		protected Integer doInBackground(String... params) {
 			ArrayList data = null;
@@ -135,6 +162,14 @@ public class AndroidUIMainActivity extends Activity {
 				//data.add("Connection error");
 				return 0;
 			}
+		}
+		
+		@Override
+		protected void onPostExecute(Integer Result){
+			if(Result == 0){
+				loading.setText("Points failed to load.");
+			}
+			
 		}
 		
 		/**
