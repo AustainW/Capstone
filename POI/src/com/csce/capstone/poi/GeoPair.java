@@ -11,10 +11,12 @@ public class GeoPair {
 
 	private double longitude;
 	private double latitude;
+	private int radius;
 	
 	public GeoPair(double lati, double longi) {
 		this.longitude = longi;
 		this.latitude = lati;
+//		this.radius = radius;
 	}
 	
 	public GeoPair(){
@@ -37,6 +39,20 @@ public class GeoPair {
 		this.latitude = latitude;
 	}
 	
+	/**
+	 * @return the radius
+	 */
+	public int getRadius() {
+		return radius;
+	}
+
+	/**
+	 * @param radius the radius to set
+	 */
+	public void setRadius(int radius) {
+		this.radius = radius;
+	}
+
 	public int compareTo(double curLati, double curLongi){
 		if(this.latitude+this.longitude > curLati+curLongi){
 			return 2;

@@ -38,10 +38,9 @@ public class ProximityAlert extends BroadcastReceiver{
 			Intent factIntent = new Intent(context, AndroidUIFactActivity.class);
 			factIntent.putExtra(POI_NAME, poi_name);
 			factIntent.putExtra(POI_ID, poi_id);
-			TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
+			factIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
 			
-			stackBuilder.addParentStack(AndroidUIFactActivity.class);
-			PendingIntent factPendingIntent = stackBuilder.getPendingIntent(0,
+			PendingIntent factPendingIntent = PendingIntent.getActivity(context, 0, factIntent,
 					PendingIntent.FLAG_UPDATE_CURRENT);
 			
 			NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
@@ -55,9 +54,10 @@ public class ProximityAlert extends BroadcastReceiver{
 			builder.setContentText("You've found " + poi_name + ". Would you like to view " +
 					"information about " + poi_name + "?");
 			builder.setAutoCancel(true);
-			//builder.setSmallIcon();
+			builder.setSmallIcon(R.drawable.ic_notification);
 			//Create new Activity to get the facts from the server and send them to 
 			//the infoactivity
+			mNotification.notify(0, builder.build());
 		}
 		Log.i(TAG, "Alert Recieved!");
 	}

@@ -35,6 +35,7 @@ public class AndroidUIFactActivity extends ListActivity {
 		setContentView(R.layout.activity_android_uifact);
 		
 		pointOfInterestData = new ArrayList();
+		this.setTitle(getIntent().getStringExtra("poi_name"));
 		
 		mInfoAdapter = new ArrayAdapter<String>(this, R.layout.row, pointOfInterestData);
 		this.setListAdapter(mInfoAdapter);
@@ -95,11 +96,17 @@ public class AndroidUIFactActivity extends ListActivity {
 				urlConnection.setDoInput(true);
 				// Allow outputs
 				urlConnection.setDoOutput(true);
+				
+				urlConnection.setRequestProperty("User-Agent","Mozilla/5.0 ( compatible ) ");
+				urlConnection.setRequestProperty("Accept","*/*");
+				// Set Request Type GET
+				urlConnection.setRequestMethod("GET");
+				
 				//Connect to the site
 				urlConnection.connect();
 				// Sending request to server
 				DataOutputStream dos = new DataOutputStream(urlConnection.getOutputStream()); 
-				dos.writeBytes("point of interest:" + poi_id + "\r\n");
+				dos.writeBytes("cmd=GetFacts&" + poi_id);
 				dos.flush();
 					
 				//Create the Readers for the InputStream
@@ -109,9 +116,10 @@ public class AndroidUIFactActivity extends ListActivity {
 				//Add each line to a String Builder
 				while((line = rd.readLine()) != null){
 					data.add(line);
+					sb.append(line);
 				}
 				urlConnection.getInputStream().close();
-				System.out.println("body=" + data.get(1).toString());
+				System.out.println("body=" + data.get(0).toString());
 				//Close the connection
 				urlConnection.disconnect();
 				//Parse the returned JSON

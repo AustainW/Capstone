@@ -14,7 +14,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 
-
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -53,14 +52,16 @@ public class AndroidUIMainActivity extends Activity {
 	private Button allLocations;
 	
 	
-	public static final String PROXIMITY_INTENT_ACTION = new String("com.cscapstone.poiapp.action.PROXIMITY_ALERT");
-	public static final String POI_NAME = "poi_name";
+	private static final String PROXIMITY_INTENT_ACTION = new String("com.csce.capstone.poi.action.PROXIMITY_ALERT");
+	private static final String POI_NAME = "poi_name";
+	private static final String POI_ID = "poi_id";
 	private LocationManager locationManager;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_android_uimain);
+		this.setTitle("PLU Points Of Interest");
 		
 		locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 		
@@ -80,6 +81,14 @@ public class AndroidUIMainActivity extends Activity {
 				startActivity(i);
 			}
 		});
+		
+//		DownloadTask dTask = new DownloadTask();
+//		dTask.execute();
+		
+		POI b1 = new Point("TestOne", 1, 47.14567, -122.44678, "PointOfInterest");
+		ArrayList<POI> temp = new ArrayList<POI>();
+		temp.add(b1);
+		setProximityAlerts(temp);
 	}
 
 	@Override
@@ -131,7 +140,7 @@ public class AndroidUIMainActivity extends Activity {
 		
 		Intent intent = new Intent(PROXIMITY_INTENT_ACTION);
 		intent.putExtra(POI_NAME, name);
-		intent.putExtra("ID", id);
+		intent.putExtra(POI_ID, id);
 		intent.putExtra(ProximityAlert.EVENT_ID_INTENT_EXTRA, eventID);
 		PendingIntent pendingIntent = 
 				PendingIntent.getBroadcast(this, requestCode, intent, PendingIntent.FLAG_CANCEL_CURRENT);

@@ -20,6 +20,13 @@
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
+        <receiver android:name="com.csce.capstone.poi.ProximityAlert" 
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.csce.capstone.poi.action.PROXIMITY_ALERT" >
+                </action>
+            </intent-filter>
+        </receiver>
         <activity
             android:name="com.csce.capstone.poi.AndroidUIMainActivity"
             android:label="@string/app_name" >
@@ -31,11 +38,11 @@
         </activity>
         <activity
             android:name="com.csce.capstone.poi.AndroidUIFactActivity"
-            android:label="@string/title_activity_android_uifact" 
-            android:parentActivityName=".AndroidUIMainActivity">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".AndroidUIFactActivity"/>
+            android:label="@string/title_activity_android_uifact"
+            android:launchMode="singleTask"
+            android:taskAffinity=""
+            android:excludeFromRecents="true">
+            
             
         </activity>
         <activity

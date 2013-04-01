@@ -11,6 +11,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.app.Activity;
@@ -22,7 +23,8 @@ import android.widget.Toast;
 
 public class AndroidUILocationsListActivity extends ListActivity {
 	private ArrayAdapter<String> mInfoAdapter;
-	private ArrayList pointOfInterestData;
+	private ArrayList<POI> pointOfInterestData;
+	private ArrayList<String> namesList;
 	
 	private static final String TAG_ID = "ID";
 	private static final String TAG_NAME = "Name";
@@ -35,10 +37,15 @@ public class AndroidUILocationsListActivity extends ListActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_android_uilocations_list);
 		
-		pointOfInterestData = new ArrayList();
+		pointOfInterestData = new ArrayList<POI>();
+		namesList = new ArrayList<String>();
+
+		this.setTitle("All Locations");
 		
-		mInfoAdapter = new ArrayAdapter<String>(this, R.layout.row, pointOfInterestData);
+		mInfoAdapter = new ArrayAdapter<String>(this, R.layout.row, namesList);
 		this.setListAdapter(mInfoAdapter);
+//		DownloadTask dTask = new DownloadTask();
+//		dTask.execute();
 	}
 
 	@Override
@@ -50,7 +57,12 @@ public class AndroidUILocationsListActivity extends ListActivity {
 	
 	public void setNewListData(ArrayList data){
 		pointOfInterestData = data;
-		mInfoAdapter = new ArrayAdapter<String>(this, R.layout.row, pointOfInterestData);
+		namesList = new ArrayList<String>();
+		for(POI poi : pointOfInterestData){
+			namesList.add(poi.getName());
+			//add small row for meta tags
+		}
+		mInfoAdapter = new ArrayAdapter<String>(this, R.layout.row, namesList);
 		this.setListAdapter(mInfoAdapter);
 		
 		//Used for debugging purposes
