@@ -21,7 +21,7 @@ import android.view.Menu;
 import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
-public class AndroidUILocationsListActivity extends ListActivity {
+public class AndroidUILocationsListActivity extends ListActivity implements OnTaskCompleted {
 	private ArrayAdapter<String> mInfoAdapter;
 	private ArrayList<POI> pointOfInterestData;
 	private ArrayList<String> namesList;
@@ -55,34 +55,59 @@ public class AndroidUILocationsListActivity extends ListActivity {
 		return true;
 	}
 	
+	@Override
+	public void onTaskCompleted(ArrayList data) {
+		setNewListData(data);
+		
+	}
+	
 	public void setNewListData(ArrayList data){
 		pointOfInterestData = data;
 		namesList = new ArrayList<String>();
-		for(POI poi : pointOfInterestData){
-			namesList.add(poi.getName());
-			//add small row for meta tags
+		if(data == null){
+			namesList.add("Error - No Locations");
+			mInfoAdapter = new ArrayAdapter<String>(this, R.layout.row, namesList);
+			this.setListAdapter(mInfoAdapter);
+		}else{
+			for(POI poi : pointOfInterestData){
+				namesList.add(poi.getName());
+				//add small row for meta tags
+				
+			}
+			mInfoAdapter = new ArrayAdapter<String>(this, R.layout.row, namesList);
+			this.setListAdapter(mInfoAdapter);
 		}
-		mInfoAdapter = new ArrayAdapter<String>(this, R.layout.row, namesList);
-		this.setListAdapter(mInfoAdapter);
+		
 		
 		//Used for debugging purposes
 		Toast.makeText(getBaseContext(), "POI data downloaded successfully", Toast.LENGTH_SHORT).show();
 	}
 
-	private class DownloadTask extends AsyncTask<String, Integer, Integer>{
+	private class DownloadTask extends AsyncTask<String, Integer, ArrayList>{
+		private OnTaskCompleted listener;
+		
+		public DownloadTask(OnTaskCompleted listener){
+			this.listener = listener;
+		}
+		
+		
 		@Override
-		protected Integer doInBackground(String... params) {
+		protected ArrayList doInBackground(String... params) {
 			ArrayList data = null;
 			try{
 				data = getCoordinates();
 				setNewListData(data);
-				return 1;
+				return data;
 			}
 			catch(Exception e){
 				Log.d("Background Task", e.toString());
 				//data.add("Connection error");
-				return 0;
+				return null;
 			}
+		}
+		@Override
+		protected void onPostExecute(ArrayList Result){
+			listener.onTaskCompleted(Result);
 		}
 		
 		/**

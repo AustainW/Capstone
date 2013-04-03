@@ -20,7 +20,7 @@ import android.view.Menu;
 import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
-public class AndroidUIFactActivity extends ListActivity {
+public class AndroidUIFactActivity extends ListActivity implements OnTaskCompleted {
 	private ArrayAdapter<String> mInfoAdapter;
 	private ArrayList pointOfInterestData;
 	
@@ -40,43 +40,85 @@ public class AndroidUIFactActivity extends ListActivity {
 		mInfoAdapter = new ArrayAdapter<String>(this, R.layout.row, pointOfInterestData);
 		this.setListAdapter(mInfoAdapter);
 		int poi_id = getIntent().getIntExtra("poi_id", -1);
+		pointOfInterestData.add("test");
+		setNewPOIData(pointOfInterestData);
 		
-		DownloadTask dTask = new DownloadTask();
-		dTask.execute(poi_id);
+//		DownloadTask dTask = new DownloadTask(this);
+//		dTask.execute(poi_id);
 	}
 
+	@Override
+	protected void onResume(){
+		super.onResume();
+		pointOfInterestData = new ArrayList();
+		this.setTitle(getIntent().getStringExtra("poi_name"));
+		
+		mInfoAdapter = new ArrayAdapter<String>(this, R.layout.row, pointOfInterestData);
+		this.setListAdapter(mInfoAdapter);
+		int poi_id = getIntent().getIntExtra("poi_id", -1);
+		pointOfInterestData.add("test");
+		setNewPOIData(pointOfInterestData);
+		
+//		DownloadTask dTask = new DownloadTask(this);
+//		dTask.execute(poi_id);
+	}
+	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.android_uifact, menu);
 		return true;
 	}
+	
+	@Override
+	public void onTaskCompleted(ArrayList data) {
+		setNewPOIData(data);
+		
+	}
 
 	public void setNewPOIData(ArrayList data){
 		pointOfInterestData = data;
-		mInfoAdapter = new ArrayAdapter<String>(this, R.layout.row, pointOfInterestData);
-		this.setListAdapter(mInfoAdapter);
-		
+		if(pointOfInterestData == null){
+			pointOfInterestData.add("Error - No Facts Found");
+			mInfoAdapter = new ArrayAdapter<String>(this, R.layout.row, pointOfInterestData);
+			this.setListAdapter(mInfoAdapter);
+		}else{
+			pointOfInterestData.add("TestOne founded in 1930");
+			pointOfInterestData.add("Realistic simulation of what the real world is like");
+			pointOfInterestData.add("Battle of Wounded Knee");
+			pointOfInterestData.add("How do you tell the real one?");
+			mInfoAdapter = new ArrayAdapter<String>(this, R.layout.row, pointOfInterestData);
+			this.setListAdapter(mInfoAdapter);
+		}
 		//Used for debugging purposes
 		Toast.makeText(getBaseContext(), "POI data downloaded successfully", Toast.LENGTH_SHORT).show();
 	}
 	
-	private class DownloadTask extends AsyncTask<Integer, Integer, Integer>{
+	private class DownloadTask extends AsyncTask<Integer, Integer, ArrayList>{
 
+		private OnTaskCompleted listener;
+		
+		public DownloadTask(OnTaskCompleted listener){
+			this.listener = listener;
+		}
 		@Override
-		protected Integer doInBackground(Integer... params) {
+		protected ArrayList doInBackground(Integer... params) {
 			ArrayList data = null;
 			try{
 				data = sendPOIData(params[0]);
-				setNewPOIData(data);
-				return 0;
+				return data;
 					
 			}
 			catch(Exception e){
 				Log.d("Background Task", e.toString());
 				//data.add("Connection error");
-				return 0;
+				return null;
 			}
+		}
+		
+		@Override
+		protected void onPostExecute(ArrayList Result){
+			listener.onTaskCompleted(Result);
 		}
 		/**
 		 * Method to send a location once it has been found by the gps/location services

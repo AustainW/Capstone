@@ -30,7 +30,7 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.TextView;
 
-public class AndroidUIMainActivity extends Activity {
+public class AndroidUIMainActivity extends Activity implements OnTaskCompleted {
 
 	private static final String TAG_ID = "ID";
 	private static final String TAG_NAME = "Name";
@@ -82,12 +82,24 @@ public class AndroidUIMainActivity extends Activity {
 			}
 		});
 		
-//		DownloadTask dTask = new DownloadTask();
+//		DownloadTask dTask = new DownloadTask(this);
 //		dTask.execute();
 		
-		POI b1 = new Point("TestOne", 1, 47.14567, -122.44678, "PointOfInterest");
+		POI b1 = new Point("TestOne", 1, 47.14567, -122.44678, "Point");
+		POI b2 = new Point("TestTwo", 2, 47.14678, -122.44044, "Point");
+		ArrayList<GeoPair> points = new ArrayList<GeoPair>();
+		GeoPair g1 = new GeoPair(47.14123, -122.44123);
+		GeoPair g2 = new GeoPair(47.14345, -122.44634);
+		GeoPair g3 = new GeoPair(47.14098, -122.44087);
+		points.add(g1);
+		points.add(g2);
+		points.add(g3);
+		POI b3 = new Building("TestThree", 3, points, "Bld");
+		
 		ArrayList<POI> temp = new ArrayList<POI>();
 		temp.add(b1);
+		temp.add(b2);
+		temp.add(b3);
 		setProximityAlerts(temp);
 	}
 
@@ -96,6 +108,12 @@ public class AndroidUIMainActivity extends Activity {
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.android_uimain, menu);
 		return true;
+	}
+	
+	@Override
+	public void onTaskCompleted(ArrayList data) {
+		setProximityAlerts(data);
+		
 	}
 	
 	public void setProximityAlerts(ArrayList locationsArray){
@@ -150,7 +168,12 @@ public class AndroidUIMainActivity extends Activity {
 	}
 	
 	
-	private class DownloadTask extends AsyncTask<String, Integer, Integer>{
+	private class DownloadTask extends AsyncTask<String, Integer, ArrayList>{
+		private OnTaskCompleted listener;
+		
+		public DownloadTask(OnTaskCompleted listener){
+			this.listener = listener;
+		}
 		
 		@Override
 		protected void onPreExecute(){
@@ -159,25 +182,24 @@ public class AndroidUIMainActivity extends Activity {
 		}
 		
 		@Override
-		protected Integer doInBackground(String... params) {
+		protected ArrayList doInBackground(String... params) {
 			ArrayList data = null;
 			try{
 				data = getCoordinates();
-				setProximityAlerts(data);
-				return 1;
+				return data;
 			}
 			catch(Exception e){
 				Log.d("Background Task", e.toString());
 				//data.add("Connection error");
-				return 0;
+				return null;
 			}
 		}
 		
 		@Override
-		protected void onPostExecute(Integer Result){
-			if(Result == 0){
-				loading.setText("Points failed to load.");
-			}
+		protected void onPostExecute(ArrayList Result){
+			listener.onTaskCompleted(Result);
+			loading.setText("Points failed to load.");
+			
 			
 		}
 		
@@ -361,6 +383,8 @@ public class AndroidUIMainActivity extends Activity {
 				return bestResult;
 			}
 		}
+
+		
 	
 	
 }

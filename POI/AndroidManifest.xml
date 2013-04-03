@@ -39,7 +39,7 @@
         <activity
             android:name="com.csce.capstone.poi.AndroidUIFactActivity"
             android:label="@string/title_activity_android_uifact"
-            android:launchMode="singleTask"
+            android:clearTaskOnLaunch="true"
             android:taskAffinity=""
             android:excludeFromRecents="true">
             
