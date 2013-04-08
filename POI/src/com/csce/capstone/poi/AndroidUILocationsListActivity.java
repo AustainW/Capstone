@@ -202,7 +202,7 @@ public class AndroidUILocationsListActivity extends ListActivity implements OnTa
 						//Add the object to the arraylist
 						locations.add(poi);
 					}
-					else if(type.equalsIgnoreCase("Point")){
+					else if(type.equalsIgnoreCase("SP")){
 						//Create a new Point of Interest object
 						POI poi = new Point(name, Integer.parseInt(id), type);
 						//Add the object to the arraylist

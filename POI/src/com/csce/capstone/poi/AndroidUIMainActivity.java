@@ -37,11 +37,11 @@ public class AndroidUIMainActivity extends Activity implements OnTaskCompleted {
 	private static final String TAG_TYPE = "Type";
 	private static final String TAG_LOCATION = "Location";
 	private static final String TAG_LOCATIONS = "Locations";
-	private static final String TAG_LONGITUDE = "Longitude";
-	private static final String TAG_LATITUDE = "Latitude";
+	private static final String TAG_LONGITUDE = "Long";
+	private static final String TAG_LATITUDE = "Lat";
 	
 
-	public static final String TAG_GEOPOINTS = "Geopairs";
+	public static final String TAG_GEOPOINTS = "GeoPairs";
 	
 	private static final int DELTA_MINUTES = 1000 * 60 * 5;
 	
@@ -82,25 +82,25 @@ public class AndroidUIMainActivity extends Activity implements OnTaskCompleted {
 			}
 		});
 		
-//		DownloadTask dTask = new DownloadTask(this);
-//		dTask.execute();
+		DownloadTask dTask = new DownloadTask(this);
+		dTask.execute();
 		
-		POI b1 = new Point("TestOne", 1, 47.14567, -122.44678, "Point");
-		POI b2 = new Point("TestTwo", 2, 47.14678, -122.44044, "Point");
-		ArrayList<GeoPair> points = new ArrayList<GeoPair>();
-		GeoPair g1 = new GeoPair(47.14123, -122.44123);
-		GeoPair g2 = new GeoPair(47.14345, -122.44634);
-		GeoPair g3 = new GeoPair(47.14098, -122.44087);
-		points.add(g1);
-		points.add(g2);
-		points.add(g3);
-		POI b3 = new Building("TestThree", 3, points, "Bld");
-		
-		ArrayList<POI> temp = new ArrayList<POI>();
-		temp.add(b1);
-		temp.add(b2);
-		temp.add(b3);
-		setProximityAlerts(temp);
+//		POI b1 = new Point("TestOne", 1, 47.14567, -122.44678, "Point");
+//		POI b2 = new Point("TestTwo", 2, 47.14678, -122.44044, "Point");
+//		ArrayList<GeoPair> points = new ArrayList<GeoPair>();
+//		GeoPair g1 = new GeoPair(47.14123, -122.44123);
+//		GeoPair g2 = new GeoPair(47.14345, -122.44634);
+//		GeoPair g3 = new GeoPair(47.14098, -122.44087);
+//		points.add(g1);
+//		points.add(g2);
+//		points.add(g3);
+//		POI b3 = new Building("TestThree", 3, points, "Bld");
+//		
+//		ArrayList<POI> temp = new ArrayList<POI>();
+//		temp.add(b1);
+//		temp.add(b2);
+//		temp.add(b3);
+//		setProximityAlerts(temp);
 	}
 
 	@Override
@@ -198,7 +198,7 @@ public class AndroidUIMainActivity extends Activity implements OnTaskCompleted {
 		@Override
 		protected void onPostExecute(ArrayList Result){
 			listener.onTaskCompleted(Result);
-			loading.setText("Points failed to load.");
+//			loading.setText("Points failed to load.");
 			
 			
 		}
@@ -247,7 +247,7 @@ public class AndroidUIMainActivity extends Activity implements OnTaskCompleted {
 				//Close the connection
 				urlConnection.disconnect();
 				//Parse the returned JSON
-				data = parseJSON(sb.toString(), 1);
+				data = parseJSON(sb.toString());
 			}
 			catch(Exception e){
 				Log.d("Exception while downloading the locations info from url", e.toString());
@@ -264,7 +264,7 @@ public class AndroidUIMainActivity extends Activity implements OnTaskCompleted {
 		 * @param parseType Where the request to parse came from.
 		 * @return An ArrayList of the data that was to be parsed.
 		 */
-		public ArrayList parseJSON(String json, int parseType){
+		public ArrayList parseJSON(String json){
 			JSONArray jsonObj;
 			try {
 				//Create a new JSON Object of the input
@@ -279,20 +279,21 @@ public class AndroidUIMainActivity extends Activity implements OnTaskCompleted {
 					JSONObject o = jsonObj.getJSONObject(i);
 					//Put data into Strings
 					String name = o.getString(TAG_NAME);
-					String id = o.getString(TAG_ID);//I think this is a number of some sort
+					int id = o.getInt(TAG_ID);//I think this is a number of some sort
 					String type = o.getString(TAG_TYPE);
 					if(type.equalsIgnoreCase("Bld")){
 						JSONArray obj = o.getJSONArray(TAG_GEOPOINTS);
 							
 						ArrayList<GeoPair> listCoords = new ArrayList<GeoPair>();
 						for(int j = 0; j < obj.length(); j++){
-							double longi = Double.parseDouble(o.getString(TAG_LONGITUDE));
-							double lati = Double.parseDouble(o.getString(TAG_LATITUDE));
-							GeoPair geo = new GeoPair(longi, lati);
+							JSONObject pointObj = obj.getJSONObject(j);
+							double longi = pointObj.getDouble(TAG_LONGITUDE);
+							double lati = pointObj.getDouble(TAG_LATITUDE);
+							GeoPair geo = new GeoPair(lati, longi);
 							listCoords.add(geo);
 						}
 						//Create a new Point of Interest Building object
-						POI poi = new Building(name, Integer.parseInt(id),
+						POI poi = new Building(name, id,
 							listCoords, type);
 						//Add the object to the arraylist
 						locations.add(poi);
@@ -303,23 +304,33 @@ public class AndroidUIMainActivity extends Activity implements OnTaskCompleted {
 						//Implement GeoPair class.
 						ArrayList<GeoPair> listCoords = new ArrayList<GeoPair>();
 						for(int j = 0; j < obj.length(); j++){
-							double longi = Double.parseDouble(o.getString(TAG_LONGITUDE));
-							double lati = Double.parseDouble(o.getString(TAG_LATITUDE));
-							GeoPair geo = new GeoPair(longi, lati);
+							JSONObject pointObj = obj.getJSONObject(j);
+							double longi = pointObj.getDouble(TAG_LONGITUDE);
+							double lati = pointObj.getDouble(TAG_LATITUDE);
+							GeoPair geo = new GeoPair(lati, longi);
 							listCoords.add(geo);
 						}
 						//Create a new Point of Interest Building object
-						POI poi = new Area(name, Integer.parseInt(id),
+						POI poi = new Area(name, id,
 							listCoords, type);
 						//Add the object to the arraylist
 						locations.add(poi);
 					}
 					else if(type.equalsIgnoreCase("Point")){
-						String longi = o.getString(TAG_LONGITUDE);
-						String lati = o.getString(TAG_LATITUDE);
+						JSONArray obj = o.getJSONArray(TAG_GEOPOINTS);
+						//Implement GeoPair class.
+						ArrayList<GeoPair> listCoords = new ArrayList<GeoPair>();
+						double longi = 0, lati = 0;
+						for(int j = 0; j < obj.length(); j++){
+							JSONObject pointObj = obj.getJSONObject(j);
+							longi = pointObj.getDouble(TAG_LONGITUDE);
+							lati = pointObj.getDouble(TAG_LATITUDE);
+							
+							
+						}
 						//Create a new Point of Interest object
-						POI poi = new Point(name, Integer.parseInt(id),
-								Double.parseDouble(lati), Double.parseDouble(longi), type);
+						POI poi = new Point(name, id,
+								lati, longi, type);
 						//Add the object to the arraylist
 						locations.add(poi);
 					}

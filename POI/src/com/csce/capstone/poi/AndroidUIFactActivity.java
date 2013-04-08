@@ -46,28 +46,18 @@ public class AndroidUIFactActivity extends ListActivity implements OnTaskComplet
 //		DownloadTask dTask = new DownloadTask(this);
 //		dTask.execute(poi_id);
 	}
-
-	@Override
-	protected void onResume(){
-		super.onResume();
-		pointOfInterestData = new ArrayList();
-		this.setTitle(getIntent().getStringExtra("poi_name"));
-		
-		mInfoAdapter = new ArrayAdapter<String>(this, R.layout.row, pointOfInterestData);
-		this.setListAdapter(mInfoAdapter);
-		int poi_id = getIntent().getIntExtra("poi_id", -1);
-		pointOfInterestData.add("test");
-		setNewPOIData(pointOfInterestData);
-		
-//		DownloadTask dTask = new DownloadTask(this);
-//		dTask.execute(poi_id);
-	}
 	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.android_uifact, menu);
 		return true;
+	}
+	
+	@Override
+	protected void onStop(){
+		super.onStop();
+		finish();
 	}
 	
 	@Override
@@ -157,7 +147,7 @@ public class AndroidUIFactActivity extends ListActivity implements OnTaskComplet
 					
 				//Add each line to a String Builder
 				while((line = rd.readLine()) != null){
-					data.add(line);
+					//data.add(line);
 					sb.append(line);
 				}
 				urlConnection.getInputStream().close();
