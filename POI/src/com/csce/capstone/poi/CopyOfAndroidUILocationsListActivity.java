@@ -17,19 +17,15 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.app.Activity;
 import android.app.ListActivity;
-import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Menu;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
-import android.widget.ExpandableListView;
 import android.widget.Toast;
 
-public class AndroidUILocationsListActivity extends Activity implements OnTaskCompleted {
-	private AndroidUILocationsExpandListAdapter eAdapter;
-	private ExpandableListView locationsListView;
-	
+public class CopyOfAndroidUILocationsListActivity extends ListActivity implements OnTaskCompleted {
+	private ArrayAdapter<String> mInfoAdapter;
 	private ArrayList<POI> pointOfInterestData;
 	private ArrayList<String> namesList;
 	
@@ -39,54 +35,52 @@ public class AndroidUILocationsListActivity extends Activity implements OnTaskCo
 	private static final String TAG_ID = "ID";
 	private static final String TAG_NAME = "Name";
 	private static final String TAG_TYPE = "Type";
-	private static final String TAG_META = "MetaTags";
+	private static final String TAG_META = "Meta Tags";
 	private static final String TAG_TAG = "Tag";
-	
-	private DownloadTask dTask;
 	
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_android_uilocations_list);
-		tWatcher = new TextWatcher(){
-
-			@Override
-			public void afterTextChanged(Editable s) {
-				// TODO Auto-generated method stub
-				
-			}
-
-			@Override
-			public void beforeTextChanged(CharSequence s, int start, int count,
-					int after) {
-				// TODO Auto-generated method stub
-				
-			}
-
-			@Override
-			public void onTextChanged(CharSequence s, int start, int before,
-					int count) {
-				if(count < before){
-					eAdapter.resetData();
-				}
-				eAdapter.getFilter().filter(s.toString());
-			}
-			
-		};
-		
-		searchBox = (EditText) findViewById(R.id.inputSearch1);
-		searchBox.addTextChangedListener(tWatcher);
+//		tWatcher = new TextWatcher(){
+//
+//			@Override
+//			public void afterTextChanged(Editable s) {
+//				// TODO Auto-generated method stub
+//				
+//			}
+//
+//			@Override
+//			public void beforeTextChanged(CharSequence s, int start, int count,
+//					int after) {
+//				// TODO Auto-generated method stub
+//				
+//			}
+//
+//			@Override
+//			public void onTextChanged(CharSequence s, int start, int before,
+//					int count) {
+//				if(count < before){
+//					eAdapter.resetData();
+//				}
+//				eAdapter.getFilter().filter(s.toString());
+//			}
+//			
+//		};
+//		
+//		searchBox = (EditText) findViewById(R.id.inputSearch1);
+//		searchBox.addTextChangedListener(tWatcher);
 		
 		pointOfInterestData = new ArrayList<POI>();
 		namesList = new ArrayList<String>();
 
 		this.setTitle("All Locations");
 		
-		
-		
-		dTask = new DownloadTask(this);
-		dTask.execute();
+		mInfoAdapter = new ArrayAdapter<String>(this, R.layout.row, namesList);
+		this.setListAdapter(mInfoAdapter);
+//		DownloadTask dTask = new DownloadTask();
+//		dTask.execute();
 	}
 
 	@Override
@@ -107,18 +101,21 @@ public class AndroidUILocationsListActivity extends Activity implements OnTaskCo
 		namesList = new ArrayList<String>();
 		if(data == null){
 			namesList.add("Error - No Locations");
-			
+			mInfoAdapter = new ArrayAdapter<String>(this, R.layout.row, namesList);
+			this.setListAdapter(mInfoAdapter);
 		}else{
-			locationsListView = (ExpandableListView) findViewById(R.id.locationsList);
-			eAdapter = new AndroidUILocationsExpandListAdapter(AndroidUILocationsListActivity.this, pointOfInterestData);
-			locationsListView.setAdapter(eAdapter);
-			
+			for(POI poi : pointOfInterestData){
+				namesList.add(poi.getName());
+				//add small row for meta tags
+				
+			}
+			mInfoAdapter = new ArrayAdapter<String>(this, R.layout.row, namesList);
+			this.setListAdapter(mInfoAdapter);
 		}
 		
 		
 		//Used for debugging purposes
 		Toast.makeText(getBaseContext(), "POI data downloaded successfully", Toast.LENGTH_SHORT).show();
-		dTask.cancel(true);
 	}
 
 	private class DownloadTask extends AsyncTask<String, Integer, ArrayList>{

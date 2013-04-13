@@ -15,6 +15,7 @@ public class Area implements POI {
 	private int id;
 	private String type;
 	private ArrayList<GeoPair> points;
+	private ArrayList<String> metaTags;
 	
 	public Area(String name, int id, ArrayList<GeoPair> listCoords,
 			String type) {
@@ -24,11 +25,12 @@ public class Area implements POI {
 		this.points = listCoords;
 	}
 	
-	public Area(String name, int id, String type) {
+	public Area(String name, int id, String type, ArrayList<String> tags) {
 		this.name = name;
 		this.type = type;
 		this.id = id;
 		this.points = null;
+		this.metaTags = tags;
 	}
 
 	/**
@@ -79,5 +81,11 @@ public class Area implements POI {
 	
 	public int getPointsListSize(){
 		return points.size();
+	}
+
+	@Override
+	public ArrayList<String> getMetaTagsList() {
+		
+		return this.metaTags;
 	}
 }

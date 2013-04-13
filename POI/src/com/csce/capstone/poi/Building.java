@@ -17,6 +17,7 @@ public class Building implements POI {
 	private int id;
 	private String type;
 	private ArrayList<GeoPair> points;
+	private ArrayList<String> metaTags;
 	
 	public Building(String name, int id, ArrayList<GeoPair> listCoords,
 			String type) {
@@ -26,11 +27,12 @@ public class Building implements POI {
 		this.points = listCoords;
 	}
 	
-	public Building(String name, int id, String type) {
+	public Building(String name, int id, String type, ArrayList<String> tags) {
 		this.name = name;
 		this.type = type;
 		this.id = id;
 		this.points = null;
+		this.metaTags = tags;
 	}
 
 	/**
@@ -81,5 +83,11 @@ public class Building implements POI {
 	
 	public int getPointsListSize(){
 		return points.size();
+	}
+
+	@Override
+	public ArrayList<String> getMetaTagsList() {
+		
+		return this.metaTags;
 	}
 }

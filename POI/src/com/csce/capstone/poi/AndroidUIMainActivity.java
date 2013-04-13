@@ -29,6 +29,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class AndroidUIMainActivity extends Activity implements OnTaskCompleted {
 
@@ -242,7 +243,7 @@ public class AndroidUIMainActivity extends Activity implements OnTaskCompleted {
 					//data.add(line);
 					sb.append(line);
 				}
-				
+				Toast.makeText(getBaseContext(), sb.toString(), Toast.LENGTH_SHORT).show();
 				
 				//Close the connection
 				urlConnection.disconnect();

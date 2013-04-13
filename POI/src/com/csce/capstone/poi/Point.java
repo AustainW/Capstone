@@ -18,6 +18,7 @@ public class Point implements POI{
 	private int id;
 	private String type;
 	private ArrayList<GeoPair> points;
+	private ArrayList<String> metaTags;
 	
 	/**
 	 * Constructor with all the elements
@@ -45,12 +46,13 @@ public class Point implements POI{
 	 * @param longi Longitude of the Point of Interest
 	 * @param type Type of the Point of Interest
 	 */
-	public Point(String name, int id, String type){
+	public Point(String name, int id, String type, ArrayList<String> tags){
 		this.name = name;
 		
 		this.id = id;
 		this.type = type;
 		points = null;
+		this.metaTags = tags;
 	}
 	/**
 	 * Empty constructor
@@ -128,5 +130,11 @@ public class Point implements POI{
 	
 	public int getPointsListSize(){
 		return points.size();
+	}
+
+	@Override
+	public ArrayList<String> getMetaTagsList() {
+		
+		return this.metaTags;
 	}
 }

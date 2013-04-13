@@ -13,6 +13,7 @@ public interface POI {
 
 	public abstract ArrayList getPointsArray();
 	public abstract int getPointsListSize();
+	public abstract ArrayList<String> getMetaTagsList();
 	public abstract String getName();
 	public abstract int getId();
 }
