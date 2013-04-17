@@ -23,15 +23,17 @@ import android.app.Activity;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.text.util.Linkify;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class AndroidUIMainActivity extends Activity implements OnTaskCompleted {
+public class AndroidUIHomeActivity extends Activity implements OnTaskCompleted {
 
 	private static final String TAG_ID = "ID";
 	private static final String TAG_NAME = "Name";
@@ -50,13 +52,17 @@ public class AndroidUIMainActivity extends Activity implements OnTaskCompleted {
 	private static final long MINIMUM_TIME_BETWEEN_UPDATE = 1000; // in Milliseconds
 	
 	private TextView loading;
-	private Button allLocations;
+	private TextView moreInfo;
 	
+	private DownloadTask dTask;
 	
 	private static final String PROXIMITY_INTENT_ACTION = new String("com.csce.capstone.poi.action.PROXIMITY_ALERT");
 	private static final String POI_NAME = "poi_name";
 	private static final String POI_ID = "poi_id";
 	private LocationManager locationManager;
+	private ArrayList<POI> locationsList;
+	
+	private int OPTIONS_TYPE;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -73,17 +79,11 @@ public class AndroidUIMainActivity extends Activity implements OnTaskCompleted {
 				new CustomLocationListener());
 		
 		loading = (TextView) findViewById(R.id.loading_text);
-		allLocations = (Button) findViewById(R.id.all_locations_button);
-		allLocations.setOnClickListener(new OnClickListener(){
-
-			@Override
-			public void onClick(View arg0) {
-				Intent i = new Intent(getApplicationContext(), AndroidUILocationsListActivity.class);
-				startActivity(i);
-			}
-		});
-		
-		DownloadTask dTask = new DownloadTask(this);
+		moreInfo = (TextView) findViewById(R.id.more_info_text);
+		Linkify.addLinks(moreInfo, Linkify.WEB_URLS);
+		locationsList = new ArrayList<POI>();
+		OPTIONS_TYPE = 0;
+		dTask = new DownloadTask(this);
 		dTask.execute();
 		
 //		POI b1 = new Point("TestOne", 1, 47.14567, -122.44678, "Point");
@@ -107,10 +107,94 @@ public class AndroidUIMainActivity extends Activity implements OnTaskCompleted {
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.android_uimain, menu);
-		return true;
+		if(OPTIONS_TYPE == 0){
+			getMenuInflater().inflate(R.menu.android_uimain, menu);
+			return true;
+		}
+		else if(OPTIONS_TYPE == 1){
+			getMenuInflater().inflate(R.menu.android_uimain_add, menu);
+			return true;
+		}
+		else{
+			return super.onCreateOptionsMenu(menu);
+		}
 	}
 	
+	@Override
+	public boolean onPrepareOptionsMenu (Menu menu) {
+
+	    menu.clear();
+
+	    if (OPTIONS_TYPE == 0) {
+	        getMenuInflater().inflate(R.menu.android_uimain, menu);
+
+	    }
+	    else { // add alerts {
+	        getMenuInflater().inflate(R.menu.android_uimain_add, menu);
+	    }
+
+	    return super.onPrepareOptionsMenu(menu);
+	}
+	
+	@Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle item selection
+        switch (item.getItemId()) {
+        case R.id.action_remove_alerts:
+            this.removeLocations();
+            return true;
+        case R.id.action_add_locations:
+        	this.setProximityAlerts(locationsList);
+        	return true;
+        default:
+            return super.onOptionsItemSelected(item);
+        }
+    }
+	
+	
+	
+	private void removeLocations() {
+		
+		if(!locationsList.isEmpty()){
+			System.out.println("Removing points");
+			System.out.println("Locations Size: " + locationsList.size());
+			GeoPair LatLongPair = new GeoPair();
+			ArrayList<GeoPair> points = new ArrayList<GeoPair>();
+			ArrayList<String> names = new ArrayList<String>();
+			ArrayList<Integer> ids = new ArrayList<Integer>();
+			
+			for(int i = 0; i < locationsList.size(); i++){
+				POI poi = (POI) locationsList.get(i);
+				points.addAll(poi.getPointsArray());
+				for(int p = 0; p < poi.getPointsListSize(); p++){
+					names.add(poi.getName());
+					ids.add(poi.getId());
+				}
+				
+			}
+			for(int j = 0; j < points.size(); j++){
+				LatLongPair.setLatitude(points.get(j).getLatitude());
+				LatLongPair.setLongitude(points.get(j).getLongitude());
+				String name = names.get(j);
+				int id = ids.get(j);
+				Intent intent = new Intent(PROXIMITY_INTENT_ACTION);
+				intent.putExtra(POI_NAME, name);
+				intent.putExtra(POI_ID, id);
+				intent.putExtra(ProximityAlert.EVENT_ID_INTENT_EXTRA, j+1);
+				PendingIntent pendingIntent = 
+						PendingIntent.getBroadcast(this, j, intent, PendingIntent.FLAG_CANCEL_CURRENT);
+				locationManager.removeProximityAlert(pendingIntent);
+			}
+			OPTIONS_TYPE = 1;
+			loading.setText("Points Removed. Go to the options menu to reload them.");
+		}
+		else{
+			Toast.makeText(getBaseContext(), "No Alerts to Remove", Toast.LENGTH_SHORT).show();
+			
+		}
+		
+	}
+
 	@Override
 	public void onTaskCompleted(ArrayList data) {
 		setProximityAlerts(data);
@@ -118,33 +202,42 @@ public class AndroidUIMainActivity extends Activity implements OnTaskCompleted {
 	}
 	
 	public void setProximityAlerts(ArrayList locationsArray){
-		GeoPair LatLongPair = new GeoPair();
-		ArrayList<GeoPair> points = new ArrayList<GeoPair>();
-		ArrayList<String> names = new ArrayList<String>();
-		ArrayList<Integer> ids = new ArrayList<Integer>();
 		
-		for(int i = 0; i < locationsArray.size(); i++){
-			POI poi = (POI) locationsArray.get(i);
-			points.addAll(poi.getPointsArray());
-			for(int p = 0; p < poi.getPointsListSize(); p++){
-				names.add(poi.getName());
-				ids.add(poi.getId());
+		if(locationsArray==null){
+			loading.setText("Error downloading points. Make sure you are connected to the internet and try again");
+		}else{
+			System.out.println("Adding points");
+			System.out.println("Locations Size: " + locationsList.size());
+			locationsList = locationsArray;
+			GeoPair LatLongPair = new GeoPair();
+			ArrayList<GeoPair> points = new ArrayList<GeoPair>();
+			ArrayList<String> names = new ArrayList<String>();
+			ArrayList<Integer> ids = new ArrayList<Integer>();
+			
+			for(int i = 0; i < locationsArray.size(); i++){
+				POI poi = (POI) locationsArray.get(i);
+				points.addAll(poi.getPointsArray());
+				for(int p = 0; p < poi.getPointsListSize(); p++){
+					names.add(poi.getName());
+					ids.add(poi.getId());
+				}
+				
+			}
+			for(int j = 0; j < points.size(); j++){
+				LatLongPair.setLatitude(points.get(j).getLatitude());
+				LatLongPair.setLongitude(points.get(j).getLongitude());
+				String name = names.get(j);
+				int id = ids.get(j);
+				setProximityAlert(LatLongPair.getLatitude(), LatLongPair.getLongitude(), name, id, j+1, j);
 			}
 			
+			loading.setText("Points Loaded. Go explore the Campus!");
+			OPTIONS_TYPE = 0;
+			//loop through each of the POIs
+			//create a proximity alert with the lat/long of the current POI
+			//MAKE SURE EACH ALERT HAS A UNIQUE ID
+			//make a receiver.
 		}
-		for(int j = 0; j < points.size(); j++){
-			LatLongPair.setLatitude(points.get(j).getLatitude());
-			LatLongPair.setLongitude(points.get(j).getLongitude());
-			String name = names.get(j);
-			int id = ids.get(j);
-			setProximityAlert(LatLongPair.getLatitude(), LatLongPair.getLongitude(), name, id, j+1, j);
-		}
-		
-		loading.setText("Points Loaded. Go explore the Campus!");
-		//loop through each of the POIs
-		//create a proximity alert with the lat/long of the current POI
-		//MAKE SURE EACH ALERT HAS A UNIQUE ID
-		//make a receiver.
 	}
 	
 	private void setProximityAlert(double lat, double lon, String name, int id, final long eventID, int requestCode){
@@ -243,7 +336,7 @@ public class AndroidUIMainActivity extends Activity implements OnTaskCompleted {
 					//data.add(line);
 					sb.append(line);
 				}
-				Toast.makeText(getBaseContext(), sb.toString(), Toast.LENGTH_SHORT).show();
+				
 				
 				//Close the connection
 				urlConnection.disconnect();

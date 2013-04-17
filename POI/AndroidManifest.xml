@@ -7,7 +7,7 @@
     <uses-sdk
         android:minSdkVersion="8"
         android:targetSdkVersion="8" />
-    
+
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" >
     </uses-permission>
     <uses-permission android:name="android.permission.INTERNET" >
@@ -17,42 +17,49 @@
 
     <application
         android:allowBackup="true"
+        android:debuggable="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme"
-        android:debuggable="true" >
-        <receiver android:name="com.csce.capstone.poi.ProximityAlert" 
-            android:exported="false">
+        android:theme="@style/AppTheme" >
+        <receiver
+            android:name="com.csce.capstone.poi.ProximityAlert"
+            android:exported="false" >
             <intent-filter>
                 <action android:name="com.csce.capstone.poi.action.PROXIMITY_ALERT" >
                 </action>
             </intent-filter>
         </receiver>
+
         <activity
-            android:name="com.csce.capstone.poi.AndroidUIMainActivity"
+            android:name="com.csce.capstone.poi.AndroidUIHomeActivity"
             android:label="@string/app_name" >
+            
+        </activity>
+        <activity
+            android:name="com.csce.capstone.poi.AndroidUIFactActivity"
+            android:clearTaskOnLaunch="true"
+            android:excludeFromRecents="true"
+            android:label="@string/title_activity_android_uifact"
+            android:taskAffinity="" >
+        </activity>
+        <activity
+            android:name="com.csce.capstone.poi.AndroidUILocationsListActivity"
+            android:label="@string/title_activity_android_uilocations_list"
+            android:parentActivityName=".AndroidUIHomeActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".AndroidUIFactActivity" />
+        </activity>
+        <activity android:name=".AndroidUITabHostActivity"
+            android:label="@string/title_activity_android_uitab_host"
+            android:parentActivityName="android.app.TabActivity">
+            <meta-data android:name="android.support.PARENT_ACTIVITY"
+                android:value="android.app.TabActivity" />
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
-        <activity
-            android:name="com.csce.capstone.poi.AndroidUIFactActivity"
-            android:label="@string/title_activity_android_uifact"
-            android:clearTaskOnLaunch="true"
-            android:taskAffinity=""
-            android:excludeFromRecents="true">
-            
-            
-        </activity>
-        <activity
-            android:name="com.csce.capstone.poi.AndroidUILocationsListActivity"
-            android:label="@string/title_activity_android_uilocations_list" 
-            android:parentActivityName=".AndroidUIMainActivity">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".AndroidUIFactActivity"/>
         </activity>
     </application>
 

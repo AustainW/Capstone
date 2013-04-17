@@ -2,7 +2,7 @@
 <resources>
 
     <string name="app_name">POI</string>
-    <string name="action_settings">Settings</string>
+    <string name="action_remove_alerts">Remove Alerts</string>
     <string name="hello_world">Hello world!</string>
     <string name="title_activity_android_uifact">AndroidUIFactActivity</string>
     <string name="title_activity_android_uilocations_list">AndroidUILocationsListActivity</string>
@@ -10,8 +10,11 @@
     <string name="welcome_message_text">Welcome to the PLU Points of Interest App!</string>
     <string name="locations_button_text">View Locations</string>
     <string name="locations_loading_text">Points are being loaded...</string>
-    <string name="view_all_locations_text">To see all locations on campus click the button below</string>
+    <string name="about_text">This app allows you to explore campus at your own pace while also providing you with facts about the various places you might visit on campus while walking around.</string>
     <string name="more_info_text">For more information about PLU visit www.plu.edu</string>
     <string name="search_locations">Search Locations...</string>
+    <string name="title_activity_android_uitab_host">AndroidUITabHostActivity</string>
+    <string name="action_settings">Settings</string>
+    <string name="action_add_alerts">Add Alerts</string>
 
 </resources>

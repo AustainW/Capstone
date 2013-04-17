@@ -28,6 +28,7 @@ public class AndroidUIFactActivity extends ListActivity implements OnTaskComplet
 	private static final String TAG_FACTS = "Facts";
 	private static final String TAG_TEXT = "Text";
 	
+	private DownloadTask dTask;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -40,11 +41,10 @@ public class AndroidUIFactActivity extends ListActivity implements OnTaskComplet
 		mInfoAdapter = new ArrayAdapter<String>(this, R.layout.row, pointOfInterestData);
 		this.setListAdapter(mInfoAdapter);
 		int poi_id = getIntent().getIntExtra("poi_id", -1);
-		pointOfInterestData.add("test");
-		setNewPOIData(pointOfInterestData);
 		
-//		DownloadTask dTask = new DownloadTask(this);
-//		dTask.execute(poi_id);
+		
+		dTask = new DownloadTask(this);
+		dTask.execute(poi_id);
 	}
 	
 	@Override
@@ -69,17 +69,21 @@ public class AndroidUIFactActivity extends ListActivity implements OnTaskComplet
 	public void setNewPOIData(ArrayList data){
 		pointOfInterestData = data;
 		if(pointOfInterestData == null){
+			pointOfInterestData = new ArrayList<String>();
 			pointOfInterestData.add("Error - No Facts Found");
 			mInfoAdapter = new ArrayAdapter<String>(this, R.layout.row, pointOfInterestData);
 			this.setListAdapter(mInfoAdapter);
 		}else{
-			pointOfInterestData.add("TestOne founded in 1930");
-			pointOfInterestData.add("Realistic simulation of what the real world is like");
-			pointOfInterestData.add("Battle of Wounded Knee");
-			pointOfInterestData.add("How do you tell the real one?");
+			for(int i = 0; i < pointOfInterestData.size(); i++){
+				if(pointOfInterestData.get(i).equals("null")){
+					pointOfInterestData.remove(i);
+				}
+			}
 			mInfoAdapter = new ArrayAdapter<String>(this, R.layout.row, pointOfInterestData);
 			this.setListAdapter(mInfoAdapter);
 		}
+		
+		dTask.cancel(true);
 		//Used for debugging purposes
 		Toast.makeText(getBaseContext(), "POI data downloaded successfully", Toast.LENGTH_SHORT).show();
 	}
@@ -138,7 +142,7 @@ public class AndroidUIFactActivity extends ListActivity implements OnTaskComplet
 				urlConnection.connect();
 				// Sending request to server
 				DataOutputStream dos = new DataOutputStream(urlConnection.getOutputStream()); 
-				dos.writeBytes("cmd=GetFacts&" + poi_id);
+				dos.writeBytes("cmd=GetFacts&LocID=" + poi_id);
 				dos.flush();
 					
 				//Create the Readers for the InputStream
@@ -151,11 +155,11 @@ public class AndroidUIFactActivity extends ListActivity implements OnTaskComplet
 					sb.append(line);
 				}
 				urlConnection.getInputStream().close();
-				System.out.println("body=" + data.get(0).toString());
+				
 				//Close the connection
 				urlConnection.disconnect();
 				//Parse the returned JSON
-				data = parseJSON(sb.toString(), 2);
+				data = parseJSON(sb.toString());
 			}
 			catch(Exception e){
 				Log.d("Exception while downloading facts info from url", e.toString());
@@ -165,7 +169,7 @@ public class AndroidUIFactActivity extends ListActivity implements OnTaskComplet
 		}
 		
 		
-		public ArrayList parseJSON(String json, int parseType){
+		public ArrayList parseJSON(String json){
 			
 			try {
 				JSONArray jsonObj = new JSONArray(json);

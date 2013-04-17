@@ -29,7 +29,7 @@ public class ProximityAlert extends BroadcastReceiver{
 	public void onReceive(Context context, Intent intent) {
 		long eventID = intent.getLongExtra(EVENT_ID_INTENT_EXTRA, -1);
 		String poi_name = intent.getStringExtra(POI_NAME);
-		int poi_id = intent.getIntExtra("ID", -1);
+		int poi_id = intent.getIntExtra(POI_ID, -1);
 		String key = LocationManager.KEY_PROXIMITY_ENTERING;
 		
 		Boolean entering = intent.getBooleanExtra(key, false);

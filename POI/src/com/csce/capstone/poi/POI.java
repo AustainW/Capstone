@@ -11,7 +11,7 @@ import java.util.ArrayList;
  */
 public interface POI {
 
-	public abstract ArrayList getPointsArray();
+	public abstract ArrayList<GeoPair> getPointsArray();
 	public abstract int getPointsListSize();
 	public abstract ArrayList<String> getMetaTagsList();
 	public abstract String getName();
