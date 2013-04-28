@@ -24,14 +24,15 @@ import android.view.Menu;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ExpandableListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class AndroidUILocationsListActivity extends Activity implements OnTaskCompleted {
 	private AndroidUILocationsExpandListAdapter eAdapter;
 	private ExpandableListView locationsListView;
+	private TextView errorTextView;
 	
 	private ArrayList<POI> pointOfInterestData;
-	private ArrayList<String> namesList;
 	
 	private EditText searchBox;
 	private TextWatcher tWatcher;
@@ -79,7 +80,6 @@ public class AndroidUILocationsListActivity extends Activity implements OnTaskCo
 		searchBox.addTextChangedListener(tWatcher);
 		
 		pointOfInterestData = new ArrayList<POI>();
-		namesList = new ArrayList<String>();
 
 		this.setTitle("All Locations");
 		
@@ -97,6 +97,18 @@ public class AndroidUILocationsListActivity extends Activity implements OnTaskCo
 	}
 	
 	@Override
+	protected void onStop(){
+		super.onStop();
+		searchBox.removeTextChangedListener(tWatcher);
+	}
+	
+	@Override
+	protected void onStart(){
+		super.onStart();
+		searchBox.addTextChangedListener(tWatcher);
+	}
+	
+	@Override
 	public void onTaskCompleted(ArrayList data) {
 		setNewListData(data);
 		
@@ -104,9 +116,10 @@ public class AndroidUILocationsListActivity extends Activity implements OnTaskCo
 	
 	public void setNewListData(ArrayList data){
 		pointOfInterestData = data;
-		namesList = new ArrayList<String>();
 		if(data == null){
-			namesList.add("Error - No Locations");
+			errorTextView = (TextView) findViewById(R.id.errorView);
+			errorTextView.setText("Error - No Locations");
+			searchBox.setVisibility(2);
 			
 		}else{
 			locationsListView = (ExpandableListView) findViewById(R.id.locationsList);
@@ -134,7 +147,7 @@ public class AndroidUILocationsListActivity extends Activity implements OnTaskCo
 			ArrayList data = null;
 			try{
 				data = getCoordinates();
-				setNewListData(data);
+				//setNewListData(data);
 				return data;
 			}
 			catch(Exception e){
@@ -228,8 +241,12 @@ public class AndroidUILocationsListActivity extends Activity implements OnTaskCo
 					String type = o.getString(TAG_TYPE);
 					if(type.equalsIgnoreCase("Bld")){
 						String tagsString = o.getString(TAG_META);
+						ArrayList<String> tags = new ArrayList<String>();
+						String newTagsList[] = tagsString.split("\\,\\s*");
+						for(String s : newTagsList){
+							tags.add(s);
+						}
 						
-						ArrayList<String> tags = new ArrayList<String>(Arrays.asList(tagsString.split("\\s,\\s*")));
 						//Create a new Point of Interest Building object
 						POI poi = new Building(name, Integer.parseInt(id), type, tags);
 						//Add the object to the arraylist
@@ -238,8 +255,12 @@ public class AndroidUILocationsListActivity extends Activity implements OnTaskCo
 					}
 					else if(type.equalsIgnoreCase("Area")){
 						String tagsString = o.getString(TAG_META);
-						
-						ArrayList<String> tags = new ArrayList<String>(Arrays.asList(tagsString.split("\\s,\\s*")));
+						ArrayList<String> tags = new ArrayList<String>();
+						String newTagsList[] = tagsString.split("\\,\\s*");
+						for(String s : newTagsList){
+							tags.add(s);
+						}
+						//ArrayList<String> tags = new ArrayList<String>(Arrays.asList(tagsString.split("\\s,\\s*")));
 						
 						//Create a new Point of Interest Building object
 						POI poi = new Area(name, Integer.parseInt(id), type, tags);
@@ -248,8 +269,12 @@ public class AndroidUILocationsListActivity extends Activity implements OnTaskCo
 					}
 					else if(type.equalsIgnoreCase("SP")){
 						String tagsString = o.getString(TAG_META);
-						
-						ArrayList<String> tags = new ArrayList<String>(Arrays.asList(tagsString.split("\\s,\\s*")));
+						ArrayList<String> tags = new ArrayList<String>();
+						String newTagsList[] = tagsString.split("\\,\\s*");
+						for(String s : newTagsList){
+							tags.add(s);
+						}
+						//ArrayList<String> tags = new ArrayList<String>(Arrays.asList(tagsString.split("\\s,\\s*")));
 						//Create a new Point of Interest object
 						POI poi = new Point(name, Integer.parseInt(id), type, tags);
 						//Add the object to the arraylist

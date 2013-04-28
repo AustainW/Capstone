@@ -1,4 +1,4 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
@@ -8,6 +8,14 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     android:orientation="vertical"
     tools:context=".AndroidUILocationsListActivity" >
+   
+    <TextView 
+        android:id="@+id/errorView"
+        android:layout_width="fill_parent"
+	    android:layout_height="wrap_content"
+	    android:textAlignment="center"
+	    android:text=" "
+        />
     
     <EditText android:id="@+id/inputSearch1"
 	    android:layout_width="fill_parent"
@@ -15,12 +23,13 @@
 	    android:hint="@string/search_locations"
 	    android:inputType="textVisiblePassword" />
 
-    <ListView
+    <ExpandableListView
         android:id="@+id/locationsList"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:drawSelectorOnTop="false"
         android:background="#FFFFFF"
+        android:groupIndicator="@android:color/transparent"
          />
 
-</RelativeLayout>
+</LinearLayout>

@@ -39,19 +39,21 @@
             android:name="com.csce.capstone.poi.AndroidUIFactActivity"
             android:clearTaskOnLaunch="true"
             android:excludeFromRecents="true"
+            android:screenOrientation="portrait"
             android:label="@string/title_activity_android_uifact"
             android:taskAffinity="" >
         </activity>
         <activity
             android:name="com.csce.capstone.poi.AndroidUILocationsListActivity"
             android:label="@string/title_activity_android_uilocations_list"
+            android:screenOrientation="portrait"
             android:parentActivityName=".AndroidUIHomeActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".AndroidUIFactActivity" />
         </activity>
         <activity android:name=".AndroidUITabHostActivity"
-            android:label="@string/title_activity_android_uitab_host"
+            android:label="@string/app_name"
             android:parentActivityName="android.app.TabActivity">
             <meta-data android:name="android.support.PARENT_ACTIVITY"
                 android:value="android.app.TabActivity" />

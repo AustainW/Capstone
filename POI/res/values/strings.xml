@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">POI</string>
+    <string name="app_name">PLU Points of Interest</string>
     <string name="action_remove_alerts">Remove Alerts</string>
     <string name="hello_world">Hello world!</string>
     <string name="title_activity_android_uifact">AndroidUIFactActivity</string>
     <string name="title_activity_android_uilocations_list">AndroidUILocationsListActivity</string>
-    <string name="poi_url">http://www.cs.plu.edu/~demacia/api/</string>
+    <string name="poi_url">http://www.cs.plu.edu/~demacia/template/api/</string>
     <string name="welcome_message_text">Welcome to the PLU Points of Interest App!</string>
     <string name="locations_button_text">View Locations</string>
     <string name="locations_loading_text">Points are being loaded...</string>

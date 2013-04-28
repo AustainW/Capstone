@@ -38,8 +38,6 @@ public class AndroidUIHomeActivity extends Activity implements OnTaskCompleted {
 	private static final String TAG_ID = "ID";
 	private static final String TAG_NAME = "Name";
 	private static final String TAG_TYPE = "Type";
-	private static final String TAG_LOCATION = "Location";
-	private static final String TAG_LOCATIONS = "Locations";
 	private static final String TAG_LONGITUDE = "Long";
 	private static final String TAG_LATITUDE = "Lat";
 	
@@ -156,8 +154,8 @@ public class AndroidUIHomeActivity extends Activity implements OnTaskCompleted {
 	private void removeLocations() {
 		
 		if(!locationsList.isEmpty()){
-			System.out.println("Removing points");
-			System.out.println("Locations Size: " + locationsList.size());
+//			System.out.println("Removing points");
+//			System.out.println("Locations Size: " + locationsList.size());
 			GeoPair LatLongPair = new GeoPair();
 			ArrayList<GeoPair> points = new ArrayList<GeoPair>();
 			ArrayList<String> names = new ArrayList<String>();
@@ -206,8 +204,8 @@ public class AndroidUIHomeActivity extends Activity implements OnTaskCompleted {
 		if(locationsArray==null){
 			loading.setText("Error downloading points. Make sure you are connected to the internet and try again");
 		}else{
-			System.out.println("Adding points");
-			System.out.println("Locations Size: " + locationsList.size());
+//			System.out.println("Adding points");
+//			System.out.println("Locations Size: " + locationsList.size());
 			locationsList = locationsArray;
 			GeoPair LatLongPair = new GeoPair();
 			ArrayList<GeoPair> points = new ArrayList<GeoPair>();

@@ -37,14 +37,14 @@ public class AndroidUILocationsExpandListAdapter extends BaseExpandableListAdapt
 
 	@Override
 	public Object getChild(int groupPosition, int childPosition) {
-		// TODO Auto-generated method stub
-		return null;
+		ArrayList<String> tags = pointOfInterestData.get(groupPosition).getMetaTagsList();
+		return tags.get(childPosition);
 	}
 
 	@Override
 	public long getChildId(int groupPosition, int childPosition) {
 		// TODO Auto-generated method stub
-		return 0;
+		return childPosition;
 	}
 
 	@Override
@@ -55,13 +55,13 @@ public class AndroidUILocationsExpandListAdapter extends BaseExpandableListAdapt
 		
 		if(v == null){
 			LayoutInflater inflater = (LayoutInflater) appContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-			v = inflater.inflate(R.layout.row, parent, false);	
+			v = inflater.inflate(R.layout.sub_row, parent, false);	
 			TextView lt = (TextView) v.findViewById(R.id.itemName);
 			holder.LocationTag = lt;
 			v.setTag(holder);
 		}
 		else{
-			v.getTag();
+			holder = (LocationHolder) v.getTag();
 		}
 		
 		
@@ -74,26 +74,23 @@ public class AndroidUILocationsExpandListAdapter extends BaseExpandableListAdapt
 
 	@Override
 	public int getChildrenCount(int groupPosition) {
-		// TODO Auto-generated method stub
-		return 0;
+
+		return pointOfInterestData.get(groupPosition).getMetaTagsSize();
 	}
 
 	@Override
 	public Object getGroup(int groupPosition) {
-		// TODO Auto-generated method stub
-		return null;
+		return pointOfInterestData.get(groupPosition);
 	}
 
 	@Override
 	public int getGroupCount() {
-		// TODO Auto-generated method stub
-		return 0;
+		return pointOfInterestData.size();
 	}
 
 	@Override
 	public long getGroupId(int groupPosition) {
-		// TODO Auto-generated method stub
-		return 0;
+		return pointOfInterestData.get(groupPosition).getId();
 	}
 
 	@Override
@@ -160,7 +157,7 @@ public class AndroidUILocationsExpandListAdapter extends BaseExpandableListAdapt
 		protected FilterResults performFiltering(CharSequence constraint) {
 			
 			FilterResults result = new FilterResults();
-			if(constraint != null && constraint.toString().length() > 0){
+			if(constraint == null || constraint.toString().length() == 0){
 				result.values = originalPOIData;
 				result.count = originalPOIData.size();
 				
@@ -168,10 +165,12 @@ public class AndroidUILocationsExpandListAdapter extends BaseExpandableListAdapt
 				ArrayList<POI> nPOIList = new ArrayList<POI>();
 				for(POI p : pointOfInterestData){
 					ArrayList<String> tags = p.getMetaTagsList();
-					for(String s : tags){
-						if(s.toUpperCase().startsWith(constraint.toString().toUpperCase())){
-							nPOIList.add(p);
-							break;
+					if(tags != null){
+						for(String s : tags){
+							if(s.toUpperCase().startsWith(constraint.toString().toUpperCase())){
+								nPOIList.add(p);
+								break;
+							}
 						}
 					}
 				}

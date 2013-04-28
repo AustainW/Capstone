@@ -88,4 +88,9 @@ public class Area implements POI {
 		
 		return this.metaTags;
 	}
+	@Override
+	public int getMetaTagsSize() {
+		// TODO Auto-generated method stub
+		return this.metaTags.size();
+	}
 }
